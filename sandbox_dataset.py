@@ -1,54 +1,31 @@
 
-from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.preprocessing import LabelEncoder
 from pyriemann.classification import MDM
 from pyriemann.estimation import XdawnCovariances, ERPCovariances
 from tqdm import tqdm
+from braininvaders2014a.dataset import BrainInvaders2014a
+from scipy.io import loadmat
 import numpy as np
 import mne
-from scipy.io import loadmat
+
+from sklearn.externals import joblib
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import make_scorer
+def score_func(y, y_pred):
+    idx = (y == 1)
+    return y_pred[idx].sum() / len(y_pred[idx])
 
 scr = {}
 
-for subject in [1, 2, 3, 4, 5]:
+dataset = BrainInvaders2014a()
 
-    file_path = './data/subject_' + str(subject).zfill(2) + '.mat'
+for subject in dataset.subject_list:
 
-    sessions = {}
-    session_name = 'session_1'
-    sessions[session_name] = {}
-
-    run_name = 'run_1'
-
-    chnames = ['FP1',
-                'FP2',
-                'F3',
-                'AFz',
-                'F4',
-                'T7',
-                'Cz',
-                'T8',
-                'P7',
-                'P3',
-                'Pz',
-                'P4',
-                'P8',
-                'O1',
-                'Oz',
-                'O2',
-                'STI 014']
-    chtypes = ['eeg'] * 16 + ['stim']               
-
-    D = loadmat(file_path)['samples'].T
-    S = D[1:17,:]
-    stim = D[-1,:]
-    X = np.concatenate([S, stim[None,:]])
-
-    info = mne.create_info(ch_names=chnames, sfreq=512,
-                           ch_types=chtypes, montage='standard_1020',
-                           verbose=False)
-    raw = mne.io.RawArray(data=X, info=info, verbose=False)    
+    #load data
+    print(subject)
+    sessions = dataset._get_single_subject_data(subject)
+    raw = sessions['session_1']['run_1']
 
     # filter data and resample
     fmin = 1
@@ -63,17 +40,20 @@ for subject in [1, 2, 3, 4, 5]:
 
     # get trials and labels
     X = epochs.get_data()
-    y = events[:, -1]
+    y = epochs.events[:, -1]
     y = LabelEncoder().fit_transform(y)
 
     # cross validation
     skf = StratifiedKFold(n_splits=5)
     clf = make_pipeline(XdawnCovariances(estimator='lwf', classes=[1]), MDM())
-    scr[subject] = cross_val_score(clf, X, y, cv=skf, scoring='roc_auc').mean()
+    scr[subject] = cross_val_score(clf, X, y, cv=skf, scoring = make_scorer(score_func)).mean()
 
     # print results of classification
     print('subject', subject)
     print('mean AUC :', scr[subject])
+
+filename = './scores_p300.pkl'
+joblib.dump(scr, filename)
 
 
 

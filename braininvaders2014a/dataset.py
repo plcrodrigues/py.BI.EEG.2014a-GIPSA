@@ -12,7 +12,7 @@ from scipy.io import loadmat
 from distutils.dir_util import copy_tree
 import shutil
 
-BI2014a_URL = 'https://zenodo.org/record/2669187/files/'
+BI2014a_URL = 'https://zenodo.org/record/2669495/files/'
 
 class BrainInvaders2014a():
     '''
@@ -52,6 +52,7 @@ class BrainInvaders2014a():
                     'STI 014']
         chtypes = ['eeg'] * 16 + ['stim']               
 
+        file_path = file_path_list[0]
         D = loadmat(file_path)['samples'].T
         S = D[1:17,:]
         stim = D[-1,:]
@@ -61,6 +62,8 @@ class BrainInvaders2014a():
                                ch_types=chtypes, montage='standard_1020',
                                verbose=False)
         raw = mne.io.RawArray(data=X, info=info, verbose=False)
+
+        sessions[session_name][run_name] = raw
 
         return sessions
 
@@ -72,11 +75,11 @@ class BrainInvaders2014a():
 
         # check if has the .zip
         url = BI2014a_URL + 'subject_' + str(subject).zfill(2) + '.zip'
-        path_zip = dl.data_path(url, 'BRAININVADERS2014')
+        path_zip = dl.data_path(url, 'BRAININVADERS2014A')
         path_folder = path_zip.strip('subject_' + str(subject).zfill(2) + '.zip')
 
         # check if has to unzip
-        if not(os.path.isdir(path_folder + 'subject{:d}/'.format(subject))):
+        if not(os.path.isdir(path_folder + 'subject_' + str(subject).zfill(2) + '/')):
             print('unzip', path_zip)
             zip_ref = zipfile.ZipFile(path_zip, "r")
             zip_ref.extractall(path_folder)
@@ -84,6 +87,6 @@ class BrainInvaders2014a():
         subject_paths = []
 
         # filter the data regarding the experimental conditions
-        subject_paths.append(path_folder + 'subject_' + str(subject).zfill(2) + '/training.mat')
+        subject_paths.append(path_folder + 'subject_' + str(subject).zfill(2) + '.mat')
 
         return subject_paths
