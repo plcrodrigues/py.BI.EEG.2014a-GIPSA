@@ -3,7 +3,7 @@
 
 import mne
 import numpy as np
-from braininvaders2013 import download as dl
+from braininvaders2014a import download as dl
 import os
 import glob
 import zipfile
@@ -12,7 +12,7 @@ from scipy.io import loadmat
 from distutils.dir_util import copy_tree
 import shutil
 
-BI2014a_URL = 'https://zenodo.org/record/2669495/files/'
+BI2014a_URL = 'https://zenodo.org/record/3235796/files/'
 
 class BrainInvaders2014a():
     '''
@@ -79,14 +79,16 @@ class BrainInvaders2014a():
         path_folder = path_zip.strip('subject_' + str(subject).zfill(2) + '.zip')
 
         # check if has to unzip
-        if not(os.path.isdir(path_folder + 'subject_' + str(subject).zfill(2) + '/')):
+        path_folder_subject = path_folder + 'subject_' + str(subject).zfill(2) + os.sep
+        if not(os.path.isdir(path_folder_subject)):
+            os.mkdir(path_folder_subject)
             print('unzip', path_zip)
             zip_ref = zipfile.ZipFile(path_zip, "r")
-            zip_ref.extractall(path_folder)
+            zip_ref.extractall(path_folder_subject)
 
         subject_paths = []
 
         # filter the data regarding the experimental conditions
-        subject_paths.append(path_folder + 'subject_' + str(subject).zfill(2) + '.mat')
+        subject_paths.append(path_folder_subject + 'subject_' + str(subject).zfill(2) + '.mat')
 
         return subject_paths
