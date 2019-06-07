@@ -56,5 +56,8 @@ for subject in dataset.subject_list:
 filename = './classification_scores.pkl'
 joblib.dump(scr, filename)
 
+with open('classification_scores.txt', 'w') as the_file:
+    for subject in scr.keys():
+        the_file.write('subject ' + str(subject).zfill(2) + ' :' + ' {:.2f}'.format(scr[subject]) + '\n')
 
 
