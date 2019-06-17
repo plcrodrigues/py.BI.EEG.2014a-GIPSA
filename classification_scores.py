@@ -1,6 +1,6 @@
 
 from pyriemann.classification import MDM
-from pyriemann.estimation import XdawnCovariances, ERPCovariances
+from pyriemann.estimation import ERPCovariances
 from tqdm import tqdm
 
 import sys
@@ -42,11 +42,11 @@ for subject in dataset.subject_list:
     # get trials and labels
     X = epochs.get_data()
     y = epochs.events[:,-1]
-    y = LabelEncoder().fit_transform(y)
+    y = y - 1
 
     # cross validation
     skf = StratifiedKFold(n_splits=5)
-    clf = make_pipeline(XdawnCovariances(estimator='lwf', classes=[1]), MDM())
+    clf = make_pipeline(ERPCovariances(estimator='lwf', classes=[1]), MDM())
     scr[subject] = cross_val_score(clf, X, y, cv=skf, scoring = 'roc_auc').mean()
 
     # print results of classification
