@@ -11,6 +11,7 @@ import yaml
 from scipy.io import loadmat
 from distutils.dir_util import copy_tree
 import shutil
+import pandas as pd
 
 BI2014a_URL = 'https://zenodo.org/record/3235796/files/'
 
@@ -54,6 +55,7 @@ class BrainInvaders2014a():
 
         file_path = file_path_list[0]
         D = loadmat(file_path)['samples'].T
+
         S = D[1:17,:]
         stim = D[-1,:]
         X = np.concatenate([S, stim[None,:]])

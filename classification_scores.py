@@ -30,7 +30,7 @@ for subject in dataset.subject_list:
 
     # filter data and resample
     fmin = 1
-    fmax = 24
+    fmax = 20
     raw.filter(fmin, fmax, verbose=False)
 
     # detect the events and cut the signal into epochs
