@@ -13,11 +13,19 @@ from distutils.dir_util import copy_tree
 import shutil
 import pandas as pd
 
-BI2014a_URL = 'https://zenodo.org/record/3235796/files/'
+BI2014a_URL = 'https://zenodo.org/record/3266223/files/'
 
 class BrainInvaders2014a():
     '''
-
+    This dataset contains electroencephalographic (EEG) recordings of 71 subjects 
+    playing to a visual P300 Brain-Computer Interface (BCI) videogame named Brain Invaders. 
+    The interface uses the oddball paradigm on a grid of 36 symbols (1 Target, 35 Non-Target) 
+    that are flashed pseudo-randomly to elicit the P300 response. EEG data were recorded 
+    using 16 active dry electrodes with up to three game sessions. The experiment took place 
+    at GIPSA-lab, Grenoble, France, in 2014. A full description of the experiment is available 
+    at https://hal.archives-ouvertes.fr/hal-02171575. Python code for manipulating the data 
+    is available at https://github.com/plcrodrigues/py.BI.EEG.2014a-GIPSA. The ID of this 
+    dataset is bi2014a.
     '''
 
     def __init__(self):
