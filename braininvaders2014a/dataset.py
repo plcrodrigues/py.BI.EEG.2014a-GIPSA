@@ -42,8 +42,8 @@ class BrainInvaders2014a():
         sessions[session_name] = {}
         run_name = 'run_1'
 
-        chnames = ['FP1',
-                    'FP2',
+        chnames = ['Fp1',
+                    'Fp2',
                     'F3',
                     'AFz',
                     'F4',
