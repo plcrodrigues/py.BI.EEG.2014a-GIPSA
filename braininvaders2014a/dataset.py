@@ -15,6 +15,7 @@ import pandas as pd
 
 BI2014a_URL = 'https://zenodo.org/record/3266223/files/'
 
+
 class BrainInvaders2014a():
     '''
     This dataset contains electroencephalographic (EEG) recordings of 71 subjects 
@@ -30,7 +31,7 @@ class BrainInvaders2014a():
 
     def __init__(self):
 
-        self.subject_list = list(range(1, 65 + 1))
+        self.subject_list = list(range(1, 65))
 
     def _get_single_subject_data(self, subject):
         """return data for a single subject"""
@@ -43,30 +44,30 @@ class BrainInvaders2014a():
         run_name = 'run_1'
 
         chnames = ['Fp1',
-                    'Fp2',
-                    'F3',
-                    'AFz',
-                    'F4',
-                    'T7',
-                    'Cz',
-                    'T8',
-                    'P7',
-                    'P3',
-                    'Pz',
-                    'P4',
-                    'P8',
-                    'O1',
-                    'Oz',
-                    'O2',
-                    'STI 014']
-        chtypes = ['eeg'] * 16 + ['stim']               
+                   'Fp2',
+                   'F3',
+                   'AFz',
+                   'F4',
+                   'T7',
+                   'Cz',
+                   'T8',
+                   'P7',
+                   'P3',
+                   'Pz',
+                   'P4',
+                   'P8',
+                   'O1',
+                   'Oz',
+                   'O2',
+                   'STI 014']
+        chtypes = ['eeg'] * 16 + ['stim']
 
         file_path = file_path_list[0]
         D = loadmat(file_path)['samples'].T
 
-        S = D[1:17,:]
-        stim = D[-1,:]
-        X = np.concatenate([S, stim[None,:]])
+        S = D[1:17, :]
+        stim = D[-1, :]
+        X = np.concatenate([S, stim[None, :]])
 
         info = mne.create_info(ch_names=chnames, sfreq=512,
                                ch_types=chtypes, montage='standard_1020',
@@ -86,10 +87,12 @@ class BrainInvaders2014a():
         # check if has the .zip
         url = BI2014a_URL + 'subject_' + str(subject).zfill(2) + '.zip'
         path_zip = dl.data_path(url, 'BRAININVADERS2014A')
-        path_folder = path_zip.strip('subject_' + str(subject).zfill(2) + '.zip')
+        path_folder = path_zip.strip(
+            'subject_' + str(subject).zfill(2) + '.zip')
 
         # check if has to unzip
-        path_folder_subject = path_folder + 'subject_' + str(subject).zfill(2) + os.sep
+        path_folder_subject = path_folder + \
+            'subject_' + str(subject).zfill(2) + os.sep
         if not(os.path.isdir(path_folder_subject)):
             os.mkdir(path_folder_subject)
             print('unzip', path_zip)
@@ -99,6 +102,7 @@ class BrainInvaders2014a():
         subject_paths = []
 
         # filter the data regarding the experimental conditions
-        subject_paths.append(path_folder_subject + 'subject_' + str(subject).zfill(2) + '.mat')
+        subject_paths.append(path_folder_subject +
+                             'subject_' + str(subject).zfill(2) + '.mat')
 
         return subject_paths
